@@ -33,6 +33,10 @@ https://goerli.etherscan.io/address/0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5#r
 https://goerli.etherscan.io/address/0xE7304dF39c9f861D0fe210f441Ded3f8Dd057440
 https://goerli.etherscan.io/address/0x2E2CfeA8A06c29a25B502F8D69498FbfbDE94F6c#readContract
 
+The Graph:
+https://thegraph.com/hosted-service/subgraph/quent043/trustv2
+https://api.thegraph.com/subgraphs/name/quent043/trustv2
+
 
 ## Problem
 

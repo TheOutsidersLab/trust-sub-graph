@@ -26,12 +26,12 @@ export function getOrCreateOwner(id: string): Owner {
   return owner;
 }
 
-export function getOrCreateLease(id: string): Lease {
+export function getOrCreateLease(id: string, tenantId: string, ownerId: string): Lease {
   let lease = Lease.load(id);
   if (!lease) {
     lease = new Lease(id);
-    // lease.owner = '0';
-    // lease.tenant = '0';
+    lease.owner = ownerId;
+    lease.tenant = tenantId;
     lease.rentAmount = ZERO;
     lease.totalNumberOfRents = ZERO;
     lease.paymentToken = ZERO_ADDRESS;

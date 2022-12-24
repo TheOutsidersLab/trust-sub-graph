@@ -15,15 +15,15 @@
   },
      "goerli": {
       "OwnerId": {
-        "address": "0xa05EfCca003D411AfeC740E1cD1EBAd239132d8b",
+        "address": "0x01dbf024D566a5006a6eAFFaF7b286AF73dC6409",
         "startBlock": 0
       },
       "TenantId": {
-        "address": "0x08D68747082e85BE7e82C20C50c6D5A40F3BF4eD",
+        "address": "0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5",
         "startBlock": 0
       },
       "Lease": {
-        "address": "0xf0b90c8d694Dc315092A6909C3fc6E8968673725",
+        "address": "0xE7304dF39c9f861D0fe210f441Ded3f8Dd057440",
         "startBlock": 0
       }
     },

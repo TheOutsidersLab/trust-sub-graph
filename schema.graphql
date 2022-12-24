@@ -39,8 +39,8 @@ type Owner @entity {
 
 type Lease @entity {
     id: ID! # Token index
-    tenant: Tenant # Tenant id
-    owner: Owner # Owner id
+    tenant: Tenant! # Tenant id
+    owner: Owner! # Owner id
     rentAmount: BigInt! # Rent amount
     totalNumberOfRents: BigInt! # Total number of rents
     paymentToken: Bytes! # Payment token

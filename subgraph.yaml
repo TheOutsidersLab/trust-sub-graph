@@ -4,10 +4,10 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: OwnerId
-    network: localhost
+    network: goerli
     source:
       abi: OwnerId
-      address: "0x1Ce33915e6F56f880b981891C109121dCE91c601"
+      address: "0x01dbf024D566a5006a6eAFFaF7b286AF73dC6409"
       startBlock: 0
     mapping:
       kind: ethereum/events
@@ -26,10 +26,10 @@ dataSources:
       file: ./src/mappings/OwnerIdMapping.ts
   - kind: ethereum/contract
     name: TenantId
-    network: localhost
+    network: goerli
     source:
       abi: TenantId
-      address: "0x62Ad07183530a4202097377e1f955FCcda827754"
+      address: "0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5"
       startBlock: 0
     mapping:
       kind: ethereum/events
@@ -50,10 +50,10 @@ dataSources:
       file: ./src/mappings/TenantIdMapping.ts
   - kind: ethereum/contract
     name: Lease
-    network: localhost
+    network: goerli
     source:
       abi: Lease
-      address: "0xE99F4178bF67D8EdDE14E625E6F7E3568d52cb86"
+      address: "0xE7304dF39c9f861D0fe210f441Ded3f8Dd057440"
       startBlock: 0
     mapping:
       kind: ethereum/events

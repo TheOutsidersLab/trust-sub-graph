@@ -19,7 +19,7 @@ import {Lease, Owner, Tenant} from "../../generated/schema";
 import {log} from "@graphprotocol/graph-ts";
 
 export function handleCancellationRequested(event: CancellationRequested): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString());
+  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
   lease.cancelledByOwner = event.params.cancelledByOwner;
   lease.cancelledByTenant = event.params.cancelledByTenant;
 
@@ -27,17 +27,17 @@ export function handleCancellationRequested(event: CancellationRequested): void 
   lease.save();
 }
 
-// TODO: Things done to remove later:
-// - Removed " bangs!" from all tenant & owner entities
-// - Moved the 'leaase.save()" function to after the for loop in the handleLeaseCreated handler
 export function handleLeaseCreated(event: LeaseCreated): void {
+  // Get the owner and tenant before creating the lease
+  const tenantId = getOrCreateTenant(event.params.tenantId.toString()).id;
+  const ownerId = getOrCreateOwner(event.params.ownerId.toString()).id;
   //Create the lease
-  const lease = getOrCreateLease(event.params.leaseId.toString());
+  const lease = getOrCreateLease(event.params.leaseId.toString(), tenantId, ownerId);
   log.warning('Lease - handleLeaseCreated - LeaseId from entity just created: {}', [lease.id])
-  lease.owner = Owner.load(event.params.ownerId.toString())!.id;
-  lease.tenant = Tenant.load(event.params.tenantId.toString())!.id;
-  log.warning('Lease - handleLeaseCreated - TenantId from entity linked to Lease: {}', [lease.tenant!.toString()])
-  log.warning('Lease - handleLeaseCreated - OwnerId from entity linked to Lease: {}', [lease.owner!.toString()])
+  // lease.owner = Owner.load(event.params.ownerId.toString())!.id;
+  // lease.tenant = Tenant.load(event.params.tenantId.toString())!.id;
+  log.warning('Lease - handleLeaseCreated - TenantId from entity linked to Lease: {}', [lease.tenant.toString()])
+  log.warning('Lease - handleLeaseCreated - OwnerId from entity linked to Lease: {}', [lease.owner.toString()])
   lease.rentAmount = event.params.rentAmount;
   lease.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
   lease.paymentToken = event.params.paymentToken;
@@ -70,7 +70,7 @@ export function handleLeaseCreated(event: LeaseCreated): void {
 }
 
 export function handleLeaseReviewedByTenant(event: LeaseReviewedByTenant): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString());
+  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
 
   lease.tenantReviewUri = event.params.reviewUri;
 
@@ -79,7 +79,7 @@ export function handleLeaseReviewedByTenant(event: LeaseReviewedByTenant): void 
 }
 
 export function handleLeaseReviewedByOwner(event: LeaseReviewedByOwner): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString());
+  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
 
   lease.ownerReviewUri = event.params.reviewUri;
 
@@ -88,7 +88,7 @@ export function handleLeaseReviewedByOwner(event: LeaseReviewedByOwner): void {
 }
 
 export function handleLeaseValidated(event: LeaseValidated): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString());
+  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
   lease.status = 'ACTIVE';
 
   lease.updatedAt = event.block.timestamp;
@@ -132,7 +132,7 @@ export function handleCryptoRentPaid(event: CryptoRentPaid): void {
 }
 
 export function handleUpdateLeaseStatus(event: UpdateLeaseStatus): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString());
+  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
   let status: string;
   switch (event.params.status) {
     case 0: lease.status = 'ACTIVE';
@@ -168,7 +168,7 @@ export function handleSetRentToPending(event: SetRentToPending): void {
 }
 
 export function handleLeaseMetaDataUpdated(event: LeaseMetaDataUpdated): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString());
+  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
   lease.uri = event.params.metaData;
 
   lease.save();

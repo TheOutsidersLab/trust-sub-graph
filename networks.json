@@ -1,0 +1,44 @@
+{
+  "localhost": {
+    "OwnerId": {
+      "address": "0xBe16616Ffb87CC3845dC33bA7a7419768697D511",
+      "startBlock": 0
+    },
+    "TenantId": {
+      "address": "0x0AB0976ed91F74FA8D8F1D9EA9BEa24b7c1cb65e",
+      "startBlock": 0
+    },
+    "Lease": {
+      "address": "0x048ca8B5df207A87E8a17Ddb1fc2BFf40029C391",
+      "startBlock": 0
+    }
+  },
+     "goerli": {
+      "OwnerId": {
+        "address": "0xa05EfCca003D411AfeC740E1cD1EBAd239132d8b",
+        "startBlock": 0
+      },
+      "TenantId": {
+        "address": "0x08D68747082e85BE7e82C20C50c6D5A40F3BF4eD",
+        "startBlock": 0
+      },
+      "Lease": {
+        "address": "0xf0b90c8d694Dc315092A6909C3fc6E8968673725",
+        "startBlock": 0
+      }
+    },
+     "bnb": {
+      "OwnerId": {
+        "address": "0x734d2F200556d3E5629D809B5e6C8a565d558147",
+        "startBlock": 0
+      },
+      "TenantId": {
+        "address": "0xfF931A4cac037E473Ef170514278ec9CA3966763",
+        "startBlock": 0
+      },
+      "Lease": {
+        "address": "0x010102ABE3d40B90F75225c82a8d012ff347d2EE",
+        "startBlock": 0
+      }
+    }
+  }

@@ -1,0 +1,92 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: OwnerId
+    network: localhost
+    source:
+      abi: OwnerId
+      address: "0x1Ce33915e6F56f880b981891C109121dCE91c601"
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Owner
+      abis:
+        - name: OwnerId
+          file: ./abis/OwnerId.json
+      eventHandlers:
+        - event: Mint(indexed address,uint256,string)
+          handler: handleMint
+        - event: CidUpdated(indexed uint256,string)
+          handler: handleCidUpdated
+      file: ./src/mappings/OwnerIdMapping.ts
+  - kind: ethereum/contract
+    name: TenantId
+    network: localhost
+    source:
+      abi: TenantId
+      address: "0x62Ad07183530a4202097377e1f955FCcda827754"
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Tenant
+      abis:
+        - name: TenantId
+          file: ./abis/TenantId.json
+      eventHandlers:
+        - event: Mint(indexed address,uint256,string)
+          handler: handleMint
+        - event: CidUpdated(indexed uint256,string)
+          handler: handleCidUpdated
+        - event: TenantHasLeaseUpdated(uint256,bool)
+          handler: handleTenantHasLeaseUpdated
+      file: ./src/mappings/TenantIdMapping.ts
+  - kind: ethereum/contract
+    name: Lease
+    network: localhost
+    source:
+      abi: Lease
+      address: "0xE99F4178bF67D8EdDE14E625E6F7E3568d52cb86"
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - Owner
+      abis:
+        - name: Lease
+          file: ./abis/Lease.json
+      eventHandlers:
+        - event: CancellationRequested(uint256,bool,bool)
+          handler: handleCancellationRequested
+        - event: LeaseCreated(uint256,uint256,uint256,uint256,uint8,address,uint256,uint256,uint256,string)
+          handler: handleLeaseCreated
+        - event: LeaseReviewedByTenant(uint256,string)
+          handler: handleLeaseReviewedByTenant
+        - event: LeaseReviewedByOwner(uint256,string)
+          handler: handleLeaseReviewedByOwner
+        - event: LeaseValidated(uint256)
+          handler: handleLeaseValidated
+        - event: RentNotPaid(uint256,uint256)
+          handler: handleRentNotPaid
+        - event: FiatRentPaid(uint256,uint256,bool,uint256,int256,uint256)
+          handler: handleFiatRentPaid
+        - event: CryptoRentPaid(uint256,uint256,bool,uint256)
+          handler: handleCryptoRentPaid
+        - event: UpdateLeaseStatus(uint256,uint8)
+          handler: handleUpdateLeaseStatus
+        - event: RentPaymentIssueStatusUpdated(uint256,uint256,bool)
+          handler: handleRentPaymentIssueStatusUpdated
+        - event: SetRentToPending(uint256,uint256)
+          handler: handleSetRentToPending
+        - event: LeaseMetaDataUpdated(uint256,string)
+          handler: handleLeaseMetaDataUpdated
+      file: ./src/mappings/LeaseMapping.ts

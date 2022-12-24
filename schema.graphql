@@ -1,0 +1,76 @@
+enum PaymentStatus {
+    PENDING
+    PAID
+    NOT_PAID
+    CANCELLED
+    CONFLICT
+}
+
+enum LeaseStatus {
+    ACTIVE
+    PENDING
+    ENDED
+    CANCELLED
+}
+
+type Tenant @entity {
+    id: ID! # Tenant token id
+    handle: String! # Tenant handle
+    address: Bytes! # Tenant address
+    createdAt: BigInt # timestamp of block creation
+    updatedAt: BigInt # timestamp of the last change
+    uri: String # metadata URI of the Tenant
+    hasLease: Boolean # true if the Tenant had a lease
+    leases: [Lease!] @derivedFrom(field: "tenant")# Leases linked to the Tenant
+    rentPayments: [RentPayment!] @derivedFrom(field: "tenant")# Rents linked to the Tenant
+}
+
+
+type Owner @entity {
+    id: ID! # Owner token id
+    handle: String! # Owner handle
+    address: Bytes! # Owner address
+    createdAt: BigInt # timestamp of block creation
+    updatedAt: BigInt # timestamp of the last change
+    uri: String # metadata URI of the Tenant
+    leases: [Lease!] @derivedFrom(field: "owner")# Leases linked to the Owner
+    rentPayments: [RentPayment!] @derivedFrom(field: "owner")# Rents linked to the Owner
+}
+
+type Lease @entity {
+    id: ID! # Token index
+    tenant: Tenant # Tenant id
+    owner: Owner # Owner id
+    rentAmount: BigInt! # Rent amount
+    totalNumberOfRents: BigInt! # Total number of rents
+    paymentToken: Bytes! # Payment token
+    currencyPair: String! # Currency pair (e.g. ETH-DAI)
+    rentPaymentInterval: BigInt! # Rent payment interval
+    rentPaymentLimitTime: BigInt! # Rent payment interval time
+    startDate: BigInt! # Start date
+    status: LeaseStatus! # Status
+    createdAt: BigInt # timestamp of lease creation
+    updatedAt: BigInt # timestamp of the last change
+    uri: String # metadata URI of the lease
+    tenantReviewUri: String # metadata URI of the tenant review
+    ownerReviewUri: String # metadata URI of the owner review
+    cancelledByOwner: Boolean! # true if cancelled by owner
+    cancelledByTenant: Boolean! # true if cancelled by tenant
+    rentPayments: [RentPayment!] @derivedFrom(field: "lease")#
+}
+
+type RentPayment @entity {
+    id: ID! # Concatenation of Lease id + rent index
+    amount: BigInt! # Rent amount
+    paymentToken: Bytes! # Payment token
+    validationDate: BigInt! # Rent payment date (unix timestamp)
+    rentPaymentDate: BigInt! # Rent payment date (unix timestamp)
+    rentPaymentLimitDate: BigInt! # Rent payment limit date (unix timestamp)
+    exchangeRate: BigInt! # Exchange rate of the transaction (0 if rent in crypto or if not paid or cancelled)
+    exchangeRateTimestamp: BigInt! # Timestamp when exchange rate was fetched (0 if rent in crypto or if not paid or cancelled)
+    withoutIssues: Boolean! #
+    tenant: Tenant # Tenant
+    owner: Owner # Owner
+    lease: Lease # Associated lease
+    status: PaymentStatus! # Payment status
+}

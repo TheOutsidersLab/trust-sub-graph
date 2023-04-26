@@ -7,7 +7,7 @@ dataSources:
     network: localhost
     source:
       abi: TrustId
-      address: ""
+      address: "0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5"
       startBlock: 0
     mapping:
       kind: ethereum/events
@@ -26,6 +26,7 @@ dataSources:
         - event: LeaseContractAddressUpdated(indexed address)
           handler: handleLeaseContractAddressUpdated
       file: ./src/mappings/TrustIdMapping.ts
+
   - kind: ethereum/contract
     name: Lease
     network: localhost
@@ -74,8 +75,6 @@ dataSources:
           handler: handleLeaseReviewedByOwner
         - event: LeaseMetaDataUpdated(uint256,string)
           handler: handleLeaseMetaDataUpdated
-        - event: RentNotPaid(uint256,uint256)
-          handler: handleRentNotPaid
       file: ./src/mappings/LeaseMapping.ts
 
   - kind: ethereum/contract
@@ -121,18 +120,18 @@ dataSources:
         - name: PlatformId
           file: ./abis/PlatformId.json
       eventHandlers:
-        - event: Mint(indexed address,uint256,string, uint256)
+        - event: Mint(indexed address,uint256,string,uint256)
           handler: handleMint
         - event: CidUpdated(indexed uint256,string)
           handler: handleCidUpdated
         - event: MintFeeUpdated(uint256)
           handler: handleMintFeeUpdated
-        - event: OriginLeaseFeeRateUpdated(uint256, uint16)
+        - event: OriginLeaseFeeRateUpdated(uint256,uint16)
           handler: handleOriginLeaseFeeRateUpdated
-        - event: OriginProposalFeeRateUpdated(uint256, uint16)
+        - event: OriginProposalFeeRateUpdated(uint256,uint16)
           handler: handleOriginProposalFeeRateUpdated
-        - event: LeasePostingFeeUpdated(uint256, uint256)
+        - event: LeasePostingFeeUpdated(uint256,uint256)
           handler: handleLeasePostingFeeUpdated
-        - event: ProposalPostingFeeUpdated(uint256, uint256)
+        - event: ProposalPostingFeeUpdated(uint256,uint256)
           handler: handleProposalPostingFeeUpdated
       file: ./src/mappings/PlatformIdMapping.ts

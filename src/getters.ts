@@ -1,4 +1,4 @@
-import {ZERO, ZERO_ADDRESS} from "./constants";
+import {ZERO, ZERO_ADDRESS, ZERO_STRING} from "./constants";
 import {Lease, User, RentPayment, Platform} from "../generated/schema";
 
 export function getOrCreateUser(id: string): User {
@@ -17,6 +17,7 @@ export function getOrCreateLease(id: string, tenantId: string, ownerId: string):
   let lease = Lease.load(id);
   if (!lease) {
     lease = new Lease(id);
+    lease.type = "FIXED";
     lease.owner = ownerId;
     lease.tenant = tenantId;
     lease.rentAmount = ZERO;
@@ -24,11 +25,33 @@ export function getOrCreateLease(id: string, tenantId: string, ownerId: string):
     lease.paymentToken = ZERO_ADDRESS;
     lease.currencyPair = '';
     lease.rentPaymentInterval = ZERO;
-    lease.rentPaymentLimitTime = ZERO;
     lease.startDate = ZERO;
     lease.status = 'PENDING';
     lease.cancelledByOwner = false;
     lease.cancelledByTenant = false;
+    lease.platform = ZERO_STRING;
+    lease.save();
+  }
+  return lease;
+}
+
+export function getOrCreateOpenLease(id: string, ownerId: string): Lease {
+  let lease = Lease.load(id);
+  if (!lease) {
+    lease = new Lease(id);
+    lease.type = "OPEN";
+    lease.owner = ownerId;
+    lease.tenant = ZERO_STRING;
+    lease.rentAmount = ZERO;
+    lease.totalNumberOfRents = ZERO;
+    lease.paymentToken = ZERO_ADDRESS;
+    lease.currencyPair = '';
+    lease.rentPaymentInterval = ZERO;
+    lease.startDate = ZERO;
+    lease.status = 'PENDING';
+    lease.cancelledByOwner = false;
+    lease.cancelledByTenant = false;
+    lease.platform = ZERO_STRING;
     lease.save();
   }
   return lease;

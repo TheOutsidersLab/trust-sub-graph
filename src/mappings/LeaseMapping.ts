@@ -1,4 +1,9 @@
-import {getOrCreateLease, getOrCreateOwner, getOrCreateRentPayment, getOrCreateTenant} from "../getters";
+import {
+  getOrCreateLease,
+  getOrCreateOwner, getOrCreatePlatform,
+  getOrCreateRentPayment,
+  getOrCreateUser
+} from "../getters";
 import {
   CancellationRequested,
   LeaseCreated,
@@ -11,47 +16,42 @@ import {
   UpdateLeaseStatus,
   RentPaymentIssueStatusUpdated,
   SetRentToPending,
-  LeaseMetaDataUpdated
+  LeaseMetaDataUpdated, LeasePaymentDataUpdated
 } from "../../generated/Lease/Lease";
 import {generateIdFromTwoFields} from "../utils";
 import {BigInt} from "@graphprotocol/graph-ts/index";
 import {Lease, Owner, Tenant} from "../../generated/schema";
 import {log} from "@graphprotocol/graph-ts";
 
-export function handleCancellationRequested(event: CancellationRequested): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
-  lease.cancelledByOwner = event.params.cancelledByOwner;
-  lease.cancelledByTenant = event.params.cancelledByTenant;
-
-  lease.updatedAt = event.block.timestamp;
-  lease.save();
-}
-
 export function handleLeaseCreated(event: LeaseCreated): void {
-  // Get the owner and tenant before creating the lease
-  const tenantId = getOrCreateTenant(event.params.tenantId.toString()).id;
-  const ownerId = getOrCreateOwner(event.params.ownerId.toString()).id;
+  // Get the platform, owner and tenant before creating the lease
+  const tenantId = getOrCreateUser(event.params.tenantId.toString()).id;
+  const ownerId = getOrCreateUser(event.params.ownerId.toString()).id;
+
   //Create the lease
   const lease = getOrCreateLease(event.params.leaseId.toString(), tenantId, ownerId);
   log.warning('Lease - handleLeaseCreated - LeaseId from entity just created: {}', [lease.id])
-  // lease.owner = Owner.load(event.params.ownerId.toString())!.id;
-  // lease.tenant = Tenant.load(event.params.tenantId.toString())!.id;
   log.warning('Lease - handleLeaseCreated - TenantId from entity linked to Lease: {}', [lease.tenant.toString()])
   log.warning('Lease - handleLeaseCreated - OwnerId from entity linked to Lease: {}', [lease.owner.toString()])
-  lease.rentAmount = event.params.rentAmount;
   lease.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
-  lease.paymentToken = event.params.paymentToken;
-  lease.currencyPair = event.params.currencyPair;
   lease.rentPaymentInterval = event.params.rentPaymentInterval;
-  lease.rentPaymentLimitTime = event.params.rentPaymentLimitTime;
   lease.startDate = event.params.startDate;
+  lease.platform = getOrCreatePlatform(event.params.platform).id;
   // lease.uri = event.params.uri;
 
   lease.createdAt = event.block.timestamp;
-  // lease.save();
+  lease.save();
+}
 
+export function handleLeasePaymentDataUpdated(event: LeasePaymentDataUpdated): void {
+  const lease = getOrCreateLease(event.params.leaseId.toString(), tenantId, ownerId);
+  lease.rentAmount = event.params.rentAmount;
+  lease.paymentToken = event.params.paymentToken;
+  lease.currencyPair = event.params.currencyPair;
+
+  //TODO consider putting all this after Lease Validated event
   //Create all payments linked to the lease
-  for(let i = 0; i < event.params.totalNumberOfRents; i++) {
+  for(let i = 0; i < lease.totalNumberOfRents; i++) {
     const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), i.toString());
     const rentPayment = getOrCreateRentPayment(rentPaymentId);
     // amount field not populated here, stays equal to 0 - only when paid
@@ -67,6 +67,15 @@ export function handleLeaseCreated(event: LeaseCreated): void {
 
   lease.save();
   log.warning('Lease - handleLeaseCreated - LeaseId after save() function: {}', [lease.id])
+}
+
+export function handleCancellationRequested(event: CancellationRequested): void {
+  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
+  lease.cancelledByOwner = event.params.cancelledByOwner;
+  lease.cancelledByTenant = event.params.cancelledByTenant;
+
+  lease.updatedAt = event.block.timestamp;
+  lease.save();
 }
 
 export function handleLeaseReviewedByTenant(event: LeaseReviewedByTenant): void {
@@ -100,32 +109,6 @@ export function handleRentNotPaid(event: RentNotPaid): void {
   const rentPayment = getOrCreateRentPayment(rentPaymentId);
 
   rentPayment.status = 'NOT_PAID';
-  rentPayment.validationDate = event.block.timestamp;
-
-  rentPayment.save();
-}
-
-export function handleFiatRentPaid(event: FiatRentPaid): void {
-  const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.rentId.toString());
-  const rentPayment = getOrCreateRentPayment(rentPaymentId);
-
-  rentPayment.amount = event.params.amount;
-  rentPayment.withoutIssues = event.params.withoutIssues;
-  rentPayment.exchangeRate = event.params.exchangeRate;
-  rentPayment.exchangeRateTimestamp = event.params.exchangeRateTimestamp;
-  rentPayment.status = 'PAID';
-  rentPayment.validationDate = event.block.timestamp;
-
-  rentPayment.save();
-}
-
-export function handleCryptoRentPaid(event: CryptoRentPaid): void {
-  const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.rentId.toString());
-  const rentPayment = getOrCreateRentPayment(rentPaymentId);
-
-  rentPayment.amount = event.params.amount;
-  rentPayment.withoutIssues = event.params.withoutIssues;
-  rentPayment.status = 'PAID';
   rentPayment.validationDate = event.block.timestamp;
 
   rentPayment.save();

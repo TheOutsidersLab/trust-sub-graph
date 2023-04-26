@@ -28,7 +28,7 @@ type User @entity {
 
 type Lease @entity {
     id: ID! # Token index
-    type: String! # Lease type (OpenLease, FixedLease)
+    type: String! # Lease type (OPEN, FIXED)
     tenant: User! # Tenant id
     owner: User! # Owner id
     rentAmount: BigInt! # Rent amount
@@ -36,7 +36,6 @@ type Lease @entity {
     paymentToken: Bytes! # Payment token
     currencyPair: String! # Currency pair (e.g. ETH-DAI)
     rentPaymentInterval: BigInt! # Rent payment interval
-    rentPaymentLimitTime: BigInt! # Rent payment interval time
     startDate: BigInt! # Start date
     status: LeaseStatus! # Status
     createdAt: BigInt # timestamp of lease creation
@@ -47,7 +46,7 @@ type Lease @entity {
     cancelledByOwner: Boolean! # true if cancelled by owner
     cancelledByTenant: Boolean! # true if cancelled by tenant
     rentPayments: [RentPayment!] @derivedFrom(field: "lease")# Rents linked to the Lease
-    platform: Platform # Platform on which the service was created
+    platform: Platform! # Platform on which the service was created
 }
 
 type RentPayment @entity {

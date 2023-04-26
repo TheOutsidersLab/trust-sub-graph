@@ -13,32 +13,22 @@ enum LeaseStatus {
     CANCELLED
 }
 
-type Tenant @entity {
+type User @entity {
     id: ID! # Tenant token id
-    handle: String! # Tenant handle
-    address: Bytes! # Tenant address
+    handle: String! # User handle
+    address: Bytes! # User address
     createdAt: BigInt # timestamp of block creation
     updatedAt: BigInt # timestamp of the last change
-    uri: String # metadata URI of the Tenant
-    hasLease: Boolean # true if the Tenant had a lease
-    leases: [Lease!] @derivedFrom(field: "tenant")# Leases linked to the Tenant
-    rentPayments: [RentPayment!] @derivedFrom(field: "tenant")# Rents linked to the Tenant
-}
-
-
-type Owner @entity {
-    id: ID! # Owner token id
-    handle: String! # Owner handle
-    address: Bytes! # Owner address
-    createdAt: BigInt # timestamp of block creation
-    updatedAt: BigInt # timestamp of the last change
-    uri: String # metadata URI of the Tenant
-    leases: [Lease!] @derivedFrom(field: "owner")# Leases linked to the Owner
-    rentPayments: [RentPayment!] @derivedFrom(field: "owner")# Rents linked to the Owner
+    uri: String # metadata URI of the User
+    ownerleases: [Lease!] @derivedFrom(field: "owner")# Leases linked to the User as an owner
+    tenantleases: [Lease!] @derivedFrom(field: "tenant")# Leases linked to the User as a tenant
+#   Field below Useful ?
+    rentPayments: [RentPayment!] @derivedFrom(field: "tenant")# Rents linked to the User
 }
 
 type Lease @entity {
     id: ID! # Token index
+    type: String! # Lease type (OpenLease, FixedLease)
     tenant: Tenant! # Tenant id
     owner: Owner! # Owner id
     rentAmount: BigInt! # Rent amount
@@ -56,7 +46,8 @@ type Lease @entity {
     ownerReviewUri: String # metadata URI of the owner review
     cancelledByOwner: Boolean! # true if cancelled by owner
     cancelledByTenant: Boolean! # true if cancelled by tenant
-    rentPayments: [RentPayment!] @derivedFrom(field: "lease")#
+    rentPayments: [RentPayment!] @derivedFrom(field: "lease")# Rents linked to the Lease
+    platform: Platform # Platform on which the service was created
 }
 
 type RentPayment @entity {
@@ -74,3 +65,5 @@ type RentPayment @entity {
     lease: Lease # Associated lease
     status: PaymentStatus! # Payment status
 }
+
+type Platform @entity {}

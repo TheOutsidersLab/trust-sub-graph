@@ -3,51 +3,29 @@ schema:
   file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
-    name: OwnerId
-    network: goerli
+    name: TrustId
+    network: localhost
     source:
-      abi: OwnerId
-      address: "0x01dbf024D566a5006a6eAFFaF7b286AF73dC6409"
+      abi: TrustId
+      address: ""
       startBlock: 0
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - Owner
+        - User
       abis:
-        - name: OwnerId
-          file: ./abis/OwnerId.json
+        - name: TrustId
+          file: ./abis/TrustId.json
       eventHandlers:
         - event: Mint(indexed address,uint256,string)
           handler: handleMint
         - event: CidUpdated(indexed uint256,string)
           handler: handleCidUpdated
-      file: ./src/mappings/OwnerIdMapping.ts
-  - kind: ethereum/contract
-    name: TenantId
-    network: goerli
-    source:
-      abi: TenantId
-      address: "0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5"
-      startBlock: 0
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.6
-      language: wasm/assemblyscript
-      entities:
-        - Tenant
-      abis:
-        - name: TenantId
-          file: ./abis/TenantId.json
-      eventHandlers:
-        - event: Mint(indexed address,uint256,string)
-          handler: handleMint
-        - event: CidUpdated(indexed uint256,string)
-          handler: handleCidUpdated
-        - event: TenantHasLeaseUpdated(uint256,bool)
-          handler: handleTenantHasLeaseUpdated
-      file: ./src/mappings/TenantIdMapping.ts
+        - event: LeaseContractAddressUpdated(indexed address)
+          handler: handleLeaseContractAddressUpdated
+      file: ./src/mappings/TrustIdMapping.ts
   - kind: ethereum/contract
     name: Lease
     network: goerli

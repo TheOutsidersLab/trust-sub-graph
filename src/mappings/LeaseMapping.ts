@@ -1,6 +1,6 @@
 import {
   getOrCreateLease,
-  getOrCreateOwner, getOrCreatePlatform,
+  getOrCreatePlatform,
   getOrCreateRentPayment,
   getOrCreateUser
 } from "../getters";
@@ -9,58 +9,82 @@ import {
   LeaseCreated,
   LeaseReviewedByTenant,
   LeaseReviewedByOwner,
-  LeaseValidated,
-  RentNotPaid,
-  FiatRentPaid,
-  CryptoRentPaid,
   UpdateLeaseStatus,
   RentPaymentIssueStatusUpdated,
-  SetRentToPending,
-  LeaseMetaDataUpdated, LeasePaymentDataUpdated
+  LeaseMetaDataUpdated,
+  LeasePaymentDataUpdated,
+  LeaseUpdated,
+  ValidateLease,
+  ProposalValidated,
+  ProposalSubmitted,
+  ProposalUpdated,
+  OpenProposalSubmitted,
+  OpenProposalUpdated, UpdateRentStatus
 } from "../../generated/Lease/Lease";
 import {generateIdFromTwoFields} from "../utils";
 import {BigInt} from "@graphprotocol/graph-ts/index";
-import {Lease, Owner, Tenant} from "../../generated/schema";
 import {log} from "@graphprotocol/graph-ts";
 
 export function handleLeaseCreated(event: LeaseCreated): void {
-  // Get the platform, owner and tenant before creating the lease
-  const tenantId = getOrCreateUser(event.params.tenantId.toString()).id;
-  const ownerId = getOrCreateUser(event.params.ownerId.toString()).id;
-
   //Create the lease
-  const lease = getOrCreateLease(event.params.leaseId.toString(), tenantId, ownerId);
+  const lease = getOrCreateLease(event.params.leaseId.toString());
   log.warning('Lease - handleLeaseCreated - LeaseId from entity just created: {}', [lease.id])
   log.warning('Lease - handleLeaseCreated - TenantId from entity linked to Lease: {}', [lease.tenant.toString()])
   log.warning('Lease - handleLeaseCreated - OwnerId from entity linked to Lease: {}', [lease.owner.toString()])
+  lease.owner = getOrCreateUser(event.params.ownerId.toString()).id;
+  lease.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
   lease.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
   lease.rentPaymentInterval = event.params.rentPaymentInterval;
   lease.startDate = event.params.startDate;
-  lease.platform = getOrCreatePlatform(event.params.platform).id;
+  lease.platform = getOrCreatePlatform(event.params.platformId.toString()).id;
   // lease.uri = event.params.uri;
 
   lease.createdAt = event.block.timestamp;
   lease.save();
 }
 
+export function handleLeaseUpdated(event: LeaseUpdated): void {
+  //Create the lease
+  const lease = getOrCreateLease(event.params.leaseId.toString());
+  lease.owner = getOrCreateUser(event.params.ownerId.toString()).id;
+  lease.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
+  lease.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
+  lease.startDate = event.params.startDate;
+  lease.rentPaymentInterval = event.params.rentPaymentInterval;
+  lease.uri = event.params.metadata;
+
+  lease.updatedAt = event.block.timestamp;
+  lease.save();
+}
+
 export function handleLeasePaymentDataUpdated(event: LeasePaymentDataUpdated): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString(), tenantId, ownerId);
+  const lease = getOrCreateLease(event.params.leaseId.toString());
   lease.rentAmount = event.params.rentAmount;
   lease.paymentToken = event.params.paymentToken;
   lease.currencyPair = event.params.currencyPair;
 
-  //TODO consider putting all this after Lease Validated event
+  lease.updatedAt = event.block.timestamp;
+  lease.save();
+  log.warning('Lease - handleLeaseCreated - LeaseId after save() function: {}', [lease.id])
+}
+
+export function handleValidateLease(event: ValidateLease): void {
+  const lease = getOrCreateLease(event.params.leaseId.toString());
+  const tenantId = getOrCreateUser(lease.tenant).id;
+  const ownerId = getOrCreateUser(lease.owner).id;
+
+  lease.status = 'ACTIVE';
+
   //Create all payments linked to the lease
-  for(let i = 0; i < lease.totalNumberOfRents; i++) {
+  for(let i = 0; i < lease.totalNumberOfRents.toI32(); i++) {
     const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), i.toString());
     const rentPayment = getOrCreateRentPayment(rentPaymentId);
     // amount field not populated here, stays equal to 0 - only when paid
-    rentPayment.paymentToken = event.params.paymentToken;
-    rentPayment.tenant = Tenant.load(event.params.tenantId.toString())!.id;
-    rentPayment.owner = Owner.load(event.params.ownerId.toString())!.id;
-    rentPayment.lease = Lease.load(event.params.leaseId.toString())!.id;
-    rentPayment.rentPaymentDate = event.params.startDate.plus(event.params.rentPaymentInterval.times(BigInt.fromI32(i)));
-    rentPayment.rentPaymentLimitDate = event.params.startDate.plus(event.params.rentPaymentLimitTime.times(BigInt.fromI32(i)));
+    rentPayment.paymentToken = lease.paymentToken;
+    rentPayment.tenant = tenantId;
+    rentPayment.owner = ownerId;
+    rentPayment.lease = lease.id;
+    rentPayment.rentPaymentDate = lease.startDate.plus(lease.rentPaymentInterval.times(BigInt.fromI32(i)));
 
     rentPayment.save();
   }
@@ -69,53 +93,29 @@ export function handleLeasePaymentDataUpdated(event: LeasePaymentDataUpdated): v
   log.warning('Lease - handleLeaseCreated - LeaseId after save() function: {}', [lease.id])
 }
 
-export function handleCancellationRequested(event: CancellationRequested): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
-  lease.cancelledByOwner = event.params.cancelledByOwner;
-  lease.cancelledByTenant = event.params.cancelledByTenant;
+export function handleProposalSubmitted(event: ProposalSubmitted): void {}
 
-  lease.updatedAt = event.block.timestamp;
-  lease.save();
-}
+export function handleProposalUpdated(event: ProposalUpdated): void {}
+export function handleProposalValidated(event: ProposalValidated): void {}
 
-export function handleLeaseReviewedByTenant(event: LeaseReviewedByTenant): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
+export function handleOpenProposalSubmitted(event: OpenProposalSubmitted): void {}
 
-  lease.tenantReviewUri = event.params.reviewUri;
+export function handleOpenProposalUpdated(event: OpenProposalUpdated): void {}
 
-  lease.updatedAt = event.block.timestamp;
-  lease.save();
-}
-
-export function handleLeaseReviewedByOwner(event: LeaseReviewedByOwner): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
-
-  lease.ownerReviewUri = event.params.reviewUri;
-
-  lease.updatedAt = event.block.timestamp;
-  lease.save();
-}
-
-export function handleLeaseValidated(event: LeaseValidated): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
-  lease.status = 'ACTIVE';
-
-  lease.updatedAt = event.block.timestamp;
-  lease.save();
-}
-
-export function handleRentNotPaid(event: RentNotPaid): void {
+export function handleRentPaymentIssueStatusUpdated(event: RentPaymentIssueStatusUpdated): void {
   const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.rentId.toString());
   const rentPayment = getOrCreateRentPayment(rentPaymentId);
 
-  rentPayment.status = 'NOT_PAID';
-  rentPayment.validationDate = event.block.timestamp;
+  rentPayment.withoutIssues = event.params.withoutIssues;
 
   rentPayment.save();
 }
 
+export function handleUpdateRentStatus(event: UpdateRentStatus): void {}
+
+
 export function handleUpdateLeaseStatus(event: UpdateLeaseStatus): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
+  const lease = getOrCreateLease(event.params.leaseId.toString());
   let status: string;
   switch (event.params.status) {
     case 0: lease.status = 'ACTIVE';
@@ -132,26 +132,35 @@ export function handleUpdateLeaseStatus(event: UpdateLeaseStatus): void {
   lease.save();
 }
 
-export function handleRentPaymentIssueStatusUpdated(event: RentPaymentIssueStatusUpdated): void {
-  const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.rentId.toString());
-  const rentPayment = getOrCreateRentPayment(rentPaymentId);
+export function handleCancellationRequested(event: CancellationRequested): void {
+  const lease = getOrCreateLease(event.params.leaseId.toString());
+  lease.cancelledByOwner = event.params.cancelledByOwner;
+  lease.cancelledByTenant = event.params.cancelledByTenant;
 
-  rentPayment.withoutIssues = event.params.withoutIssues;
-
-  rentPayment.save();
+  lease.updatedAt = event.block.timestamp;
+  lease.save();
 }
 
-export function handleSetRentToPending(event: SetRentToPending): void {
-  const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.rentId.toString());
-  const rentPayment = getOrCreateRentPayment(rentPaymentId);
+export function handleLeaseReviewedByTenant(event: LeaseReviewedByTenant): void {
+  const lease = getOrCreateLease(event.params.leaseId.toString());
 
-  rentPayment.status = 'PENDING';
+  lease.tenantReviewUri = event.params.reviewUri;
 
-  rentPayment.save();
+  lease.updatedAt = event.block.timestamp;
+  lease.save();
+}
+
+export function handleLeaseReviewedByOwner(event: LeaseReviewedByOwner): void {
+  const lease = getOrCreateLease(event.params.leaseId.toString());
+
+  lease.ownerReviewUri = event.params.reviewUri;
+
+  lease.updatedAt = event.block.timestamp;
+  lease.save();
 }
 
 export function handleLeaseMetaDataUpdated(event: LeaseMetaDataUpdated): void {
-  const lease = getOrCreateLease(event.params.leaseId.toString(), '0', '0');
+  const lease = getOrCreateLease(event.params.leaseId.toString());
   lease.uri = event.params.metaData;
 
   lease.save();

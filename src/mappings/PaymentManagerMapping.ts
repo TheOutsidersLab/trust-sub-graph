@@ -1,6 +1,6 @@
-import {getOrCreateRentPayment, getOrCreateUser} from "../getters";
-import {CryptoRentPaid, FiatRentPaid} from "../../generated/Lease/Lease";
+import {getOrCreateRentPayment} from "../getters";
 import {generateIdFromTwoFields} from "../utils";
+import {CryptoRentPaid, FiatRentPaid, ProtocolFeeRateUpdated} from "../../generated/PaymentManager/PaymentManager";
 
 export function handleFiatRentPaid(event: FiatRentPaid): void {
   const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.rentId.toString());
@@ -32,6 +32,6 @@ export const handleProtocolFeeRateUpdated = (event: ProtocolFeeRateUpdated): voi
   // TODO: Integrate Protocol entity
   // const protocol = getOrCreateProtocol();
   // protocolFeeRate.rate = event.params.rate;
-
-  protocolFeeRate.save();
+  //
+  // protocolFeeRate.save();
 };

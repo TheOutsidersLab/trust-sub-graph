@@ -67,6 +67,8 @@ dataSources:
           handler: handleUpdateRentStatus
         - event: UpdateLeaseStatus(uint256,uint8)
           handler: handleUpdateLeaseStatus
+        - event: ValidateLease(uint256)
+          handler: handleValidateLease
         - event: CancellationRequested(uint256,bool,bool)
           handler: handleCancellationRequested
         - event: LeaseReviewedByTenant(uint256,string)

@@ -13,13 +13,11 @@ export function getOrCreateUser(id: string): User {
   return user;
 }
 
-export function getOrCreateLease(id: string, tenantId: string, ownerId: string): Lease {
+export function getOrCreateLease(id: string): Lease {
   let lease = Lease.load(id);
   if (!lease) {
     lease = new Lease(id);
     lease.type = "FIXED";
-    lease.owner = ownerId;
-    lease.tenant = tenantId;
     lease.rentAmount = ZERO;
     lease.totalNumberOfRents = ZERO;
     lease.paymentToken = ZERO_ADDRESS;
@@ -29,19 +27,16 @@ export function getOrCreateLease(id: string, tenantId: string, ownerId: string):
     lease.status = 'PENDING';
     lease.cancelledByOwner = false;
     lease.cancelledByTenant = false;
-    lease.platform = ZERO_STRING;
     lease.save();
   }
   return lease;
 }
 
-export function getOrCreateOpenLease(id: string, ownerId: string): Lease {
+export function getOrCreateOpenLease(id: string): Lease {
   let lease = Lease.load(id);
   if (!lease) {
     lease = new Lease(id);
     lease.type = "OPEN";
-    lease.owner = ownerId;
-    lease.tenant = ZERO_STRING;
     lease.rentAmount = ZERO;
     lease.totalNumberOfRents = ZERO;
     lease.paymentToken = ZERO_ADDRESS;
@@ -51,7 +46,6 @@ export function getOrCreateOpenLease(id: string, ownerId: string): Lease {
     lease.status = 'PENDING';
     lease.cancelledByOwner = false;
     lease.cancelledByTenant = false;
-    lease.platform = ZERO_STRING;
     lease.save();
   }
   return lease;

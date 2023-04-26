@@ -1,29 +1,16 @@
 import {ZERO, ZERO_ADDRESS} from "./constants";
-import {Lease, Owner, RentPayment, Tenant} from "../generated/schema";
+import {Lease, User, RentPayment} from "../generated/schema";
 
-export function getOrCreateTenant(id: string): Tenant {
-  let tenant = Tenant.load(id);
-  if (!tenant) {
-    tenant = new Tenant(id);
-    tenant.handle = '';
-    tenant.address = ZERO_ADDRESS;
-    tenant.uri = '';
-    tenant.hasLease = false;
-    tenant.save();
+export function getOrCreateUser(id: string): User {
+  let user = User.load(id);
+  if (!user) {
+    user = new User(id);
+    user.handle = '';
+    user.address = ZERO_ADDRESS;
+    user.uri = '';
+    user.save();
   }
-  return tenant;
-}
-
-export function getOrCreateOwner(id: string): Owner {
-  let owner = Owner.load(id);
-  if (!owner) {
-    owner = new Owner(id);
-    owner.handle = '';
-    owner.address = ZERO_ADDRESS;
-    owner.uri = '';
-    owner.save();
-  }
-  return owner;
+  return user;
 }
 
 export function getOrCreateLease(id: string, tenantId: string, ownerId: string): Lease {

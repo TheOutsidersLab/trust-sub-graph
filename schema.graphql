@@ -19,7 +19,7 @@ type User @entity {
     address: Bytes! # User address
     createdAt: BigInt # timestamp of block creation
     updatedAt: BigInt # timestamp of the last change
-    uri: String # metadata URI of the User
+    cid: String # metadata cid of the User
     ownerleases: [Lease!] @derivedFrom(field: "owner")# Leases linked to the User as an owner
     tenantleases: [Lease!] @derivedFrom(field: "tenant")# Leases linked to the User as a tenant
 #   Field below Useful ?
@@ -69,5 +69,12 @@ type RentPayment @entity {
 type Platform @entity {
     id: ID! # Platform id
     name: String! # Platform name
-    uri: String # metadata URI of the platform
+    address: Bytes! # Platform address
+    originLeaseFeeRate: BigInt! # Fee (per 10,000) asked by the platform on which the Lease was validated
+    originProposalFeeRate: BigInt! # Fee (per 10,000) asked by the platform on which the proposal was validated
+    leasePostingFee: BigInt! # Flat fee asked by the platform to post a Lease
+    proposalPostingFee: BigInt! # Flat fee asked by the platform to post a service
+    createdAt: BigInt # timestamp of block creation
+    updatedAt: BigInt # timestamp of the last change
+    cid: String # metadata cid of the platform
 }

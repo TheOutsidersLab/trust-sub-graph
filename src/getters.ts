@@ -1,5 +1,5 @@
 import {ZERO, ZERO_ADDRESS} from "./constants";
-import {Lease, User, RentPayment} from "../generated/schema";
+import {Lease, User, RentPayment, Platform} from "../generated/schema";
 
 export function getOrCreateUser(id: string): User {
   let user = User.load(id);
@@ -7,7 +7,7 @@ export function getOrCreateUser(id: string): User {
     user = new User(id);
     user.handle = '';
     user.address = ZERO_ADDRESS;
-    user.uri = '';
+    user.cid = '';
     user.save();
   }
   return user;
@@ -50,4 +50,16 @@ export function getOrCreateRentPayment(id: string): RentPayment {
     rentPayment.save();
   }
   return rentPayment;
+}
+
+export function getOrCreatePlatform(id: string): Platform {
+  let platform = Platform.load(id);
+  if (!platform) {
+    platform = new Platform(id);
+    platform.name = '';
+    platform.address = ZERO_ADDRESS;
+    platform.cid = '';
+    platform.save();
+  }
+  return platform;
 }

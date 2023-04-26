@@ -29,8 +29,8 @@ type User @entity {
 type Lease @entity {
     id: ID! # Token index
     type: String! # Lease type (OpenLease, FixedLease)
-    tenant: Tenant! # Tenant id
-    owner: Owner! # Owner id
+    tenant: User! # Tenant id
+    owner: User! # Owner id
     rentAmount: BigInt! # Rent amount
     totalNumberOfRents: BigInt! # Total number of rents
     paymentToken: Bytes! # Payment token
@@ -60,10 +60,14 @@ type RentPayment @entity {
     exchangeRate: BigInt! # Exchange rate of the transaction (0 if rent in crypto or if not paid or cancelled)
     exchangeRateTimestamp: BigInt! # Timestamp when exchange rate was fetched (0 if rent in crypto or if not paid or cancelled)
     withoutIssues: Boolean! #
-    tenant: Tenant # Tenant
-    owner: Owner # Owner
+    tenant: User # Tenant
+    owner: User # Owner
     lease: Lease # Associated lease
     status: PaymentStatus! # Payment status
 }
 
-type Platform @entity {}
+type Platform @entity {
+    id: ID! # Platform id
+    name: String! # Platform name
+    uri: String # metadata URI of the platform
+}

@@ -38,7 +38,8 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - Owner
+        - Lease
+        - RentPayment
       abis:
         - name: Lease
           file: ./abis/Lease.json
@@ -89,7 +90,8 @@ dataSources:
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        -
+        - RentPayment
+        - Lease
       abis:
         - name: PaymentManager
           file: ./abis/PaymentManager.json
@@ -119,10 +121,18 @@ dataSources:
         - name: PlatformId
           file: ./abis/PlatformId.json
       eventHandlers:
-        - event: Mint(indexed address,uint256,string)
+        - event: Mint(indexed address,uint256,string, uint256)
           handler: handleMint
         - event: CidUpdated(indexed uint256,string)
           handler: handleCidUpdated
-        - event: TenantHasLeaseUpdated(uint256,bool)
-          handler: handleTenantHasLeaseUpdated
+        - event: MintFeeUpdated(uint256)
+          handler: handleMintFeeUpdated
+        - event: OriginLeaseFeeRateUpdated(uint256, uint16)
+          handler: handleOriginLeaseFeeRateUpdated
+        - event: OriginProposalFeeRateUpdated(uint256, uint16)
+          handler: handleOriginProposalFeeRateUpdated
+        - event: LeasePostingFeeUpdated(uint256, uint256)
+          handler: handleLeasePostingFeeUpdated
+        - event: ProposalPostingFeeUpdated(uint256, uint256)
+          handler: handleProposalPostingFeeUpdated
       file: ./src/mappings/PlatformIdMapping.ts

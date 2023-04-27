@@ -152,7 +152,27 @@ export function handleRentPaymentIssueStatusUpdated(event: RentPaymentIssueStatu
   rentPayment.save();
 }
 
-export function handleUpdateRentStatus(event: UpdateRentStatus): void {}
+export function handleUpdateRentStatus(event: UpdateRentStatus): void {
+  const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.rentId.toString());
+  const rentPayment = getOrCreateRentPayment(rentPaymentId);
+
+  let status: string;
+  switch (event.params.status) {
+    case 0: status = 'Pending';
+      break;
+    case 1: status = 'Paid';
+      break;
+    case 2: status = 'Not_paid';
+      break;
+    case 3: status = 'Cancelled';
+      break;
+    case 4: status = 'Conflict';
+      break;
+  }
+
+  rentPayment.status = status;
+  rentPayment.save();
+}
 
 
 export function handleUpdateLeaseStatus(event: UpdateLeaseStatus): void {

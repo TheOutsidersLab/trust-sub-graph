@@ -73,7 +73,7 @@ export function getOrCreateProposal(id: string): Proposal {
   let proposal = Proposal.load(id);
   if (!proposal) {
     proposal = new Proposal(id);
-    proposal.status = 'Pending';
+    proposal.status = 'PENDING';
     proposal.totalNumberOfRents = ZERO;
     proposal.startDate = ZERO;
     proposal.save();

@@ -28,10 +28,10 @@ export function handleCryptoRentPaid(event: CryptoRentPaid): void {
   rentPayment.save();
 }
 
-export const handleProtocolFeeRateUpdated = (event: ProtocolFeeRateUpdated): void => {
-  // TODO: Integrate Protocol entity
-  // const protocol = getOrCreateProtocol();
-  // protocolFeeRate.rate = event.params.rate;
-  //
-  // protocolFeeRate.save();
-};
+// export const handleProtocolFeeRateUpdated = (event: ProtocolFeeRateUpdated): void => {
+//   // TODO: Integrate Protocol entity
+//   // const protocol = getOrCreateProtocol();
+//   // protocolFeeRate.rate = event.params.rate;
+//   //
+//   // protocolFeeRate.save();
+// };

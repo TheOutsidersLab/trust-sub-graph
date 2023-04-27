@@ -1,19 +1,19 @@
 {
   "localhost": {
     "TrustId": {
-      "address": "0x0AB0976ed91F74FA8D8F1D9EA9BEa24b7c1cb65e",
+      "address": "0xF50eAd67827fdF4Fb8852c0ddfe4f17e88d34594",
       "startBlock": 0
     },
     "Lease": {
-      "address": "0x048ca8B5df207A87E8a17Ddb1fc2BFf40029C391",
+      "address": "0xCa2729dd1A942D613229727f77C69005bb826AF0",
       "startBlock": 0
     },
     "PaymentManager": {
-      "address": "0xBa3396d2Fca4AF75eDBf3920f13C225009162076",
+      "address": "0xB86e2F51B14FAeFe36645fce3D534fBd4c34fcc5",
       "startBlock": 0
     },
     "PlatformId": {
-      "address": "0x7eBBdEb88FdD46866FF13aC9868a9d46bb3a8cF8",
+      "address": "0xb3e86cFa622B2Ef97DeF767B540577a4b1dcd543",
       "startBlock": 0
     }
   },

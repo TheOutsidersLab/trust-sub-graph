@@ -20,17 +20,16 @@ import {
   UpdateRentStatus
 } from "../../generated/Lease/Lease";
 import {generateIdFromTwoFields} from "../utils";
-import {BigInt} from "@graphprotocol/graph-ts/index";
-import {log} from "@graphprotocol/graph-ts";
+import {BigInt, log} from "@graphprotocol/graph-ts";
 
 export function handleLeaseCreated(event: LeaseCreated): void {
   //Create the lease
   const lease = getOrCreateLease(event.params.leaseId.toString());
   log.warning('Lease - handleLeaseCreated - LeaseId from entity just created: {}', [lease.id])
-  log.warning('Lease - handleLeaseCreated - TenantId from entity linked to Lease: {}', [lease.tenant!.toString()])
-  log.warning('Lease - handleLeaseCreated - OwnerId from entity linked to Lease: {}', [lease.owner!.toString()])
   lease.owner = getOrCreateUser(event.params.ownerId.toString()).id;
   lease.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
+  if(lease.tenant == "0")
+    lease.type = "OPEN";
   lease.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
   lease.rentPaymentInterval = event.params.rentPaymentInterval;
   lease.startDate = event.params.startDate;
@@ -46,6 +45,8 @@ export function handleLeaseUpdated(event: LeaseUpdated): void {
   const lease = getOrCreateLease(event.params.leaseId.toString());
   lease.owner = getOrCreateUser(event.params.ownerId.toString()).id;
   lease.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
+  if(lease.tenant == "0")
+    lease.type = "OPEN";
   lease.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
   lease.startDate = event.params.startDate;
   lease.rentPaymentInterval = event.params.rentPaymentInterval;
@@ -116,10 +117,13 @@ export function handleProposalUpdated(event: ProposalUpdated): void {
 export function handleProposalValidated(event: ProposalValidated): void {
   const proposalId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.tenantId.toString());
   const proposal = getOrCreateProposal(proposalId);
-  proposal.status = 'Accepted';
+  proposal.status = 'ACCEPTED';
   proposal.save();
 
   const lease = getOrCreateLease(event.params.leaseId.toString());
+  lease.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
+  lease.totalNumberOfRents = proposal.totalNumberOfRents;
+  lease.startDate = proposal.startDate;
   lease.status = 'ACTIVE';
   lease.save();
 
@@ -159,15 +163,15 @@ export function handleUpdateRentStatus(event: UpdateRentStatus): void {
 
   let status: string;
   switch (event.params.status) {
-    case 0: status = 'Pending';
+    case 0: status = 'PENDING';
       break;
-    case 1: status = 'Paid';
+    case 1: status = 'PAID';
       break;
-    case 2: status = 'Not_paid';
+    case 2: status = 'NOT_PAID';
       break;
-    case 3: status = 'Cancelled';
+    case 3: status = 'CANCELLED';
       break;
-    case 4: status = 'Conflict';
+    case 4: status = 'CONFLICT';
       break;
   }
 

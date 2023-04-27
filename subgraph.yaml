@@ -51,7 +51,7 @@ dataSources:
           handler: handleLeaseUpdated
         - event: LeasePaymentDataUpdated(uint256,uint256,address,string)
           handler: handleLeasePaymentDataUpdated
-        - event: ProposalValidated(uint256,uint8,uint256)
+        - event: ProposalValidated(uint256,uint256)
           handler: handleProposalValidated
         - event: OpenProposalSubmitted(uint256,uint256,string)
           handler: handleOpenProposalSubmitted

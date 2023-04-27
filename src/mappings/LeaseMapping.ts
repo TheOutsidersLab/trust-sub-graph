@@ -112,9 +112,34 @@ export function handleProposalUpdated(event: ProposalUpdated): void {
   proposal.cid = event.params.cid;
   proposal.save();
 }
-export function handleProposalValidated(event: ProposalValidated): void {}
+export function handleProposalValidated(event: ProposalValidated): void {
+  const proposalId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.tenantId.toString());
+  const proposal = getOrCreateProposal(proposalId);
+  proposal.status = 'Accepted';
+  proposal.save();
 
-export function handleOpenProposalSubmitted(event: OpenProposalSubmitted): void {}
+  const lease = getOrCreateLease(event.params.leaseId.toString());
+  lease.status = 'ACTIVE';
+  lease.save();
+
+  //Create all payments linked to the lease
+  for(let i = 0; i < lease.totalNumberOfRents.toI32(); i++) {
+    const rentPaymentId = generateIdFromTwoFields(event.params.leaseId.toString(), i.toString());
+    const rentPayment = getOrCreateRentPayment(rentPaymentId);
+    // amount field not populated here, stays equal to 0 - only when paid
+    rentPayment.paymentToken = lease.paymentToken;
+    rentPayment.tenant = getOrCreateUser(lease.tenant).id;
+    rentPayment.owner = getOrCreateUser(lease.owner).id;
+    rentPayment.lease = lease.id;
+    rentPayment.rentPaymentDate = lease.startDate.plus(lease.rentPaymentInterval.times(BigInt.fromI32(i)));
+
+    rentPayment.save();
+  }
+}
+
+export function handleOpenProposalSubmitted(event: OpenProposalSubmitted): void {
+
+}
 
 export function handleOpenProposalUpdated(event: OpenProposalUpdated): void {}
 

@@ -92,7 +92,7 @@ export function handleValidateLease(event: ValidateLease): void {
 
 export function handleProposalSubmitted(event: ProposalSubmitted): void {
   const lease = getOrCreateLease(event.params.leaseId.toString());
- const proposalId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.tenantId.toString());
+  const proposalId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.tenantId.toString());
   const proposal = getOrCreateProposal(proposalId);
   proposal.lease = getOrCreateLease(event.params.leaseId.toString()).id;
   proposal.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
@@ -104,7 +104,14 @@ export function handleProposalSubmitted(event: ProposalSubmitted): void {
   proposal.save();
 }
 
-export function handleProposalUpdated(event: ProposalUpdated): void {}
+export function handleProposalUpdated(event: ProposalUpdated): void {
+  const proposalId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.tenantId.toString());
+  const proposal = getOrCreateProposal(proposalId);
+  proposal.totalNumberOfRents = event.params.totalNumberOfRents;
+  proposal.startDate = event.params.startDate;
+  proposal.cid = event.params.cid;
+  proposal.save();
+}
 export function handleProposalValidated(event: ProposalValidated): void {}
 
 export function handleOpenProposalSubmitted(event: OpenProposalSubmitted): void {}

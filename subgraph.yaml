@@ -59,7 +59,7 @@ dataSources:
           handler: handleOpenProposalUpdated
         - event: ProposalSubmitted(uint256,uint256,uint8,uint256,uint256,string)
           handler: handleProposalSubmitted
-        - event: ProposalUpdated(uint256,uint8,uint256,string)
+        - event: ProposalUpdated(uint256,uint256,uint8,uint256,string)
           handler: handleProposalUpdated
         - event: RentPaymentIssueStatusUpdated(uint256,uint256,bool)
           handler: handleRentPaymentIssueStatusUpdated

@@ -16,7 +16,8 @@ import {
   ProposalSubmitted,
   ProposalUpdated,
   OpenProposalSubmitted,
-  OpenProposalUpdated, UpdateRentStatus
+  OpenProposalUpdated,
+  UpdateRentStatus
 } from "../../generated/Lease/Lease";
 import {generateIdFromTwoFields} from "../utils";
 import {BigInt} from "@graphprotocol/graph-ts/index";

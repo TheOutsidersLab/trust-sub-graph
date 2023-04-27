@@ -40,6 +40,8 @@ dataSources:
       entities:
         - Lease
         - RentPayment
+        - User
+        - Proposal
       abis:
         - name: Lease
           file: ./abis/Lease.json
@@ -90,8 +92,6 @@ dataSources:
       language: wasm/assemblyscript
       entities:
         - RentPayment
-        - Lease
-        - Proposal
       abis:
         - name: PaymentManager
           file: ./abis/PaymentManager.json

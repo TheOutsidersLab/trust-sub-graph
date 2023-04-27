@@ -1,5 +1,5 @@
 import {ZERO, ZERO_ADDRESS, ZERO_STRING} from "./constants";
-import {Lease, User, RentPayment, Platform} from "../generated/schema";
+import {Lease, User, RentPayment, Platform, Proposal} from "../generated/schema";
 
 export function getOrCreateUser(id: string): User {
   let user = User.load(id);
@@ -67,6 +67,18 @@ export function getOrCreateRentPayment(id: string): RentPayment {
     rentPayment.save();
   }
   return rentPayment;
+}
+
+export function getOrCreateProposal(id: string): Proposal {
+  let proposal = Proposal.load(id);
+  if (!proposal) {
+    proposal = new Proposal(id);
+    proposal.status = 'Pending';
+    proposal.totalNumberOfRents = ZERO;
+    proposal.startDate = ZERO;
+    proposal.save();
+  }
+  return proposal;
 }
 
 export function getOrCreatePlatform(id: string): Platform {

@@ -13,6 +13,12 @@ enum LeaseStatus {
     CANCELLED
 }
 
+enum ProposalStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
+}
+
 type User @entity {
     id: ID! # Tenant token id
     handle: String! # User handle
@@ -38,7 +44,7 @@ type Lease @entity {
     rentPaymentInterval: BigInt! # Rent payment interval
     startDate: BigInt! # Start date
     status: LeaseStatus! # Status
-    createdAt: BigInt # timestamp of lease creation
+    createdAt: BigInt # timestamp of creation
     updatedAt: BigInt # timestamp of the last change
     uri: String # metadata URI of the lease
     tenantReviewUri: String # metadata URI of the tenant review
@@ -46,7 +52,22 @@ type Lease @entity {
     cancelledByOwner: Boolean! # true if cancelled by owner
     cancelledByTenant: Boolean! # true if cancelled by tenant
     rentPayments: [RentPayment!] @derivedFrom(field: "lease")# Rents linked to the Lease
-    platform: Platform # Platform on which the service was created
+    proposal: [Proposal!] @derivedFrom(field: "lease")# Proposals linked to the Lease
+    platform: Platform # Platform on which the lease was created
+}
+
+type Proposal @entity {
+    id: ID! # Proposal id - Combination of lease id + user id
+    tenant: User # Tenant id
+    owner: User # Owner id
+    lease: Lease # Associated lease
+    totalNumberOfRents: BigInt! # Total number of rents
+    startDate: BigInt! # Start date
+    cid: String # metadata cid of the lease
+    status: ProposalStatus! # Status of the proposal
+    createdAt: BigInt # timestamp of creation
+    updatedAt: BigInt # timestamp of the last change
+    platform: Platform # Platform on which the proposal was created
 }
 
 type RentPayment @entity {

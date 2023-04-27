@@ -1,8 +1,5 @@
 import {
-  getOrCreateLease,
-  getOrCreatePlatform,
-  getOrCreateRentPayment,
-  getOrCreateUser
+  getOrCreateLease, getOrCreatePlatform, getOrCreateProposal, getOrCreateRentPayment, getOrCreateUser
 } from "../getters";
 import {
   CancellationRequested,
@@ -93,7 +90,19 @@ export function handleValidateLease(event: ValidateLease): void {
   log.warning('Lease - handleLeaseCreated - LeaseId after save() function: {}', [lease.id])
 }
 
-export function handleProposalSubmitted(event: ProposalSubmitted): void {}
+export function handleProposalSubmitted(event: ProposalSubmitted): void {
+  const lease = getOrCreateLease(event.params.leaseId.toString());
+ const proposalId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.tenantId.toString());
+  const proposal = getOrCreateProposal(proposalId);
+  proposal.lease = getOrCreateLease(event.params.leaseId.toString()).id;
+  proposal.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
+  proposal.owner = getOrCreateUser(lease.owner).id;
+  proposal.totalNumberOfRents = event.params.totalNumberOfRents;
+  proposal.startDate = event.params.startDate;
+  proposal.platform = getOrCreatePlatform(event.params.platformId.toString()).id;
+  proposal.cid = event.params.metaData;
+  proposal.save();
+}
 
 export function handleProposalUpdated(event: ProposalUpdated): void {}
 export function handleProposalValidated(event: ProposalValidated): void {}

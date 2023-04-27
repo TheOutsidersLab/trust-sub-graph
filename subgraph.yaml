@@ -7,7 +7,7 @@ dataSources:
     network: localhost
     source:
       abi: TrustId
-      address: "0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5"
+      address: "0x0AB0976ed91F74FA8D8F1D9EA9BEa24b7c1cb65e"
       startBlock: 0
     mapping:
       kind: ethereum/events
@@ -26,13 +26,12 @@ dataSources:
         - event: LeaseContractAddressUpdated(indexed address)
           handler: handleLeaseContractAddressUpdated
       file: ./src/mappings/TrustIdMapping.ts
-
   - kind: ethereum/contract
     name: Lease
     network: localhost
     source:
       abi: Lease
-      address: "0xE7304dF39c9f861D0fe210f441Ded3f8Dd057440"
+      address: "0x048ca8B5df207A87E8a17Ddb1fc2BFf40029C391"
       startBlock: 0
     mapping:
       kind: ethereum/events
@@ -78,13 +77,12 @@ dataSources:
         - event: LeaseMetaDataUpdated(uint256,string)
           handler: handleLeaseMetaDataUpdated
       file: ./src/mappings/LeaseMapping.ts
-
   - kind: ethereum/contract
     name: PaymentManager
     network: localhost
     source:
       abi: PaymentManager
-      address: "0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5"
+      address: "0xBa3396d2Fca4AF75eDBf3920f13C225009162076"
       startBlock: 0
     mapping:
       kind: ethereum/events
@@ -93,6 +91,7 @@ dataSources:
       entities:
         - RentPayment
         - Lease
+        - Proposal
       abis:
         - name: PaymentManager
           file: ./abis/PaymentManager.json
@@ -104,13 +103,12 @@ dataSources:
         - event: ProtocolFeeRateUpdated(uint16)
           handler: handleProtocolFeeRateUpdated
       file: ./src/mappings/PaymentManagerMapping.ts
-
   - kind: ethereum/contract
     name: PlatformId
     network: localhost
     source:
       abi: PlatformId
-      address: "0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5"
+      address: "0x7eBBdEb88FdD46866FF13aC9868a9d46bb3a8cF8"
       startBlock: 0
     mapping:
       kind: ethereum/events

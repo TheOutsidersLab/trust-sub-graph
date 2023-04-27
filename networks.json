@@ -1,44 +1,56 @@
 {
   "localhost": {
-    "OwnerId": {
-      "address": "0xBe16616Ffb87CC3845dC33bA7a7419768697D511",
-      "startBlock": 0
-    },
-    "TenantId": {
+    "TrustId": {
       "address": "0x0AB0976ed91F74FA8D8F1D9EA9BEa24b7c1cb65e",
       "startBlock": 0
     },
     "Lease": {
       "address": "0x048ca8B5df207A87E8a17Ddb1fc2BFf40029C391",
       "startBlock": 0
+    },
+    "PaymentManager": {
+      "address": "0xBa3396d2Fca4AF75eDBf3920f13C225009162076",
+      "startBlock": 0
+    },
+    "PlatformId": {
+      "address": "0x7eBBdEb88FdD46866FF13aC9868a9d46bb3a8cF8",
+      "startBlock": 0
     }
   },
      "goerli": {
-      "OwnerId": {
-        "address": "0x01dbf024D566a5006a6eAFFaF7b286AF73dC6409",
-        "startBlock": 0
-      },
-      "TenantId": {
-        "address": "0xE18a3Ed893361cAA3a207306197Ceebd47C6BcA5",
-        "startBlock": 0
-      },
-      "Lease": {
-        "address": "0xE7304dF39c9f861D0fe210f441Ded3f8Dd057440",
-        "startBlock": 0
-      }
-    },
+       "TrustId": {
+         "address": "0x0AB0976ed91F74FA8D8F1D9EA9BEa24b7c1cb65e",
+         "startBlock": 0
+       },
+       "Lease": {
+         "address": "0x048ca8B5df207A87E8a17Ddb1fc2BFf40029C391",
+         "startBlock": 0
+       },
+       "PaymentManager": {
+         "address": "0xBa3396d2Fca4AF75eDBf3920f13C225009162076",
+         "startBlock": 0
+       },
+       "PlatformId": {
+         "address": "0x7eBBdEb88FdD46866FF13aC9868a9d46bb3a8cF8",
+         "startBlock": 0
+       }
+     },
      "bnb": {
-      "OwnerId": {
-        "address": "0x734d2F200556d3E5629D809B5e6C8a565d558147",
-        "startBlock": 0
-      },
-      "TenantId": {
-        "address": "0xfF931A4cac037E473Ef170514278ec9CA3966763",
-        "startBlock": 0
-      },
-      "Lease": {
-        "address": "0x010102ABE3d40B90F75225c82a8d012ff347d2EE",
-        "startBlock": 0
-      }
-    }
-  }
+       "TrustId": {
+         "address": "0x0AB0976ed91F74FA8D8F1D9EA9BEa24b7c1cb65e",
+         "startBlock": 0
+       },
+       "Lease": {
+         "address": "0x048ca8B5df207A87E8a17Ddb1fc2BFf40029C391",
+         "startBlock": 0
+       },
+       "PaymentManager": {
+         "address": "0xBa3396d2Fca4AF75eDBf3920f13C225009162076",
+         "startBlock": 0
+       },
+       "PlatformId": {
+         "address": "0x7eBBdEb88FdD46866FF13aC9868a9d46bb3a8cF8",
+         "startBlock": 0
+       }
+     }
+}

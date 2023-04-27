@@ -26,8 +26,8 @@ export function handleLeaseCreated(event: LeaseCreated): void {
   //Create the lease
   const lease = getOrCreateLease(event.params.leaseId.toString());
   log.warning('Lease - handleLeaseCreated - LeaseId from entity just created: {}', [lease.id])
-  log.warning('Lease - handleLeaseCreated - TenantId from entity linked to Lease: {}', [lease.tenant.toString()])
-  log.warning('Lease - handleLeaseCreated - OwnerId from entity linked to Lease: {}', [lease.owner.toString()])
+  log.warning('Lease - handleLeaseCreated - TenantId from entity linked to Lease: {}', [lease.tenant!.toString()])
+  log.warning('Lease - handleLeaseCreated - OwnerId from entity linked to Lease: {}', [lease.owner!.toString()])
   lease.owner = getOrCreateUser(event.params.ownerId.toString()).id;
   lease.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
   lease.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
@@ -67,8 +67,8 @@ export function handleLeasePaymentDataUpdated(event: LeasePaymentDataUpdated): v
 
 export function handleValidateLease(event: ValidateLease): void {
   const lease = getOrCreateLease(event.params.leaseId.toString());
-  const tenantId = getOrCreateUser(lease.tenant).id;
-  const ownerId = getOrCreateUser(lease.owner).id;
+  const tenantId = getOrCreateUser(lease.tenant!).id;
+  const ownerId = getOrCreateUser(lease.owner!).id;
 
   lease.status = 'ACTIVE';
 
@@ -96,8 +96,8 @@ export function handleProposalSubmitted(event: ProposalSubmitted): void {
   const proposal = getOrCreateProposal(proposalId);
   proposal.lease = getOrCreateLease(event.params.leaseId.toString()).id;
   proposal.tenant = getOrCreateUser(event.params.tenantId.toString()).id;
-  proposal.owner = getOrCreateUser(lease.owner).id;
-  proposal.totalNumberOfRents = event.params.totalNumberOfRents;
+  proposal.owner = getOrCreateUser(lease.owner!).id;
+  proposal.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
   proposal.startDate = event.params.startDate;
   proposal.platform = getOrCreatePlatform(event.params.platformId.toString()).id;
   proposal.cid = event.params.metaData;
@@ -107,7 +107,7 @@ export function handleProposalSubmitted(event: ProposalSubmitted): void {
 export function handleProposalUpdated(event: ProposalUpdated): void {
   const proposalId = generateIdFromTwoFields(event.params.leaseId.toString(), event.params.tenantId.toString());
   const proposal = getOrCreateProposal(proposalId);
-  proposal.totalNumberOfRents = event.params.totalNumberOfRents;
+  proposal.totalNumberOfRents = BigInt.fromI32(event.params.totalNumberOfRents);
   proposal.startDate = event.params.startDate;
   proposal.cid = event.params.cid;
   proposal.save();
@@ -128,8 +128,8 @@ export function handleProposalValidated(event: ProposalValidated): void {
     const rentPayment = getOrCreateRentPayment(rentPaymentId);
     // amount field not populated here, stays equal to 0 - only when paid
     rentPayment.paymentToken = lease.paymentToken;
-    rentPayment.tenant = getOrCreateUser(lease.tenant).id;
-    rentPayment.owner = getOrCreateUser(lease.owner).id;
+    rentPayment.tenant = getOrCreateUser(lease.tenant!).id;
+    rentPayment.owner = getOrCreateUser(lease.owner!).id;
     rentPayment.lease = lease.id;
     rentPayment.rentPaymentDate = lease.startDate.plus(lease.rentPaymentInterval.times(BigInt.fromI32(i)));
 

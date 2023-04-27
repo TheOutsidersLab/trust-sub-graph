@@ -8,6 +8,7 @@ import {
   OriginLeaseFeeRateUpdated,
   OriginProposalFeeRateUpdated, ProposalPostingFeeUpdated
 } from "../../generated/PlatformId/PlatformId";
+import {BigInt} from "@graphprotocol/graph-ts/index";
 
 export function handleMint(event: Mint): void {
   const platform = getOrCreatePlatform(event.params.platformId.toString());
@@ -33,13 +34,13 @@ export function handleMintFeeUpdated(event: MintFeeUpdated): void {
 
 export function handleOriginLeaseFeeRateUpdated(event: OriginLeaseFeeRateUpdated): void {
   const platform = getOrCreatePlatform(event.params.platformId.toString());
-  platform.originLeaseFeeRate = event.params.originLeaseFeeRate;
+  platform.originLeaseFeeRate = BigInt.fromI32(event.params.originLeaseFeeRate);
   platform.save();
 }
 
 export function handleOriginProposalFeeRateUpdated(event: OriginProposalFeeRateUpdated): void {
   const platform = getOrCreatePlatform(event.params.platformId.toString());
-  platform.originProposalFeeRate = event.params.originProposalFeeRate;
+  platform.originProposalFeeRate = BigInt.fromI32(event.params.originProposalFeeRate);
   platform.save();
 }
 

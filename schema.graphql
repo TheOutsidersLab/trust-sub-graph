@@ -13,50 +13,61 @@ enum LeaseStatus {
     CANCELLED
 }
 
-type Tenant @entity {
-    id: ID! # Tenant token id
-    handle: String! # Tenant handle
-    address: Bytes! # Tenant address
-    createdAt: BigInt # timestamp of block creation
-    updatedAt: BigInt # timestamp of the last change
-    uri: String # metadata URI of the Tenant
-    hasLease: Boolean # true if the Tenant had a lease
-    leases: [Lease!] @derivedFrom(field: "tenant")# Leases linked to the Tenant
-    rentPayments: [RentPayment!] @derivedFrom(field: "tenant")# Rents linked to the Tenant
+enum ProposalStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
 }
 
-
-type Owner @entity {
-    id: ID! # Owner token id
-    handle: String! # Owner handle
-    address: Bytes! # Owner address
+type User @entity {
+    id: ID! # Tenant token id
+    handle: String! # User handle
+    address: Bytes! # User address
     createdAt: BigInt # timestamp of block creation
     updatedAt: BigInt # timestamp of the last change
-    uri: String # metadata URI of the Tenant
-    leases: [Lease!] @derivedFrom(field: "owner")# Leases linked to the Owner
-    rentPayments: [RentPayment!] @derivedFrom(field: "owner")# Rents linked to the Owner
+    cid: String # metadata cid of the User
+    ownerleases: [Lease!] @derivedFrom(field: "owner")# Leases linked to the User as an owner
+    tenantleases: [Lease!] @derivedFrom(field: "tenant")# Leases linked to the User as a tenant
+#   Field below Useful ?
+    rentPayments: [RentPayment!] @derivedFrom(field: "tenant")# Rents linked to the User
 }
 
 type Lease @entity {
     id: ID! # Token index
-    tenant: Tenant! # Tenant id
-    owner: Owner! # Owner id
+    type: String! # Lease type (OPEN, FIXED)
+    tenant: User # Tenant id
+    owner: User # Owner id
     rentAmount: BigInt! # Rent amount
     totalNumberOfRents: BigInt! # Total number of rents
     paymentToken: Bytes! # Payment token
     currencyPair: String! # Currency pair (e.g. ETH-DAI)
     rentPaymentInterval: BigInt! # Rent payment interval
-    rentPaymentLimitTime: BigInt! # Rent payment interval time
     startDate: BigInt! # Start date
     status: LeaseStatus! # Status
-    createdAt: BigInt # timestamp of lease creation
+    createdAt: BigInt # timestamp of creation
     updatedAt: BigInt # timestamp of the last change
     uri: String # metadata URI of the lease
     tenantReviewUri: String # metadata URI of the tenant review
     ownerReviewUri: String # metadata URI of the owner review
     cancelledByOwner: Boolean! # true if cancelled by owner
     cancelledByTenant: Boolean! # true if cancelled by tenant
-    rentPayments: [RentPayment!] @derivedFrom(field: "lease")#
+    rentPayments: [RentPayment!] @derivedFrom(field: "lease")# Rents linked to the Lease
+    proposal: [Proposal!] @derivedFrom(field: "lease")# Proposals linked to the Lease
+    platform: Platform # Platform on which the lease was created
+}
+
+type Proposal @entity {
+    id: ID! # Proposal id - Combination of lease id + user id
+    tenant: User # Tenant id
+    owner: User # Owner id
+    lease: Lease # Associated lease
+    totalNumberOfRents: BigInt! # Total number of rents
+    startDate: BigInt! # Start date
+    cid: String # metadata cid of the lease
+    status: ProposalStatus! # Status of the proposal
+    createdAt: BigInt # timestamp of creation
+    updatedAt: BigInt # timestamp of the last change
+    platform: Platform # Platform on which the proposal was created
 }
 
 type RentPayment @entity {
@@ -69,8 +80,21 @@ type RentPayment @entity {
     exchangeRate: BigInt! # Exchange rate of the transaction (0 if rent in crypto or if not paid or cancelled)
     exchangeRateTimestamp: BigInt! # Timestamp when exchange rate was fetched (0 if rent in crypto or if not paid or cancelled)
     withoutIssues: Boolean! #
-    tenant: Tenant # Tenant
-    owner: Owner # Owner
+    tenant: User # Tenant
+    owner: User # Owner
     lease: Lease # Associated lease
     status: PaymentStatus! # Payment status
+}
+
+type Platform @entity {
+    id: ID! # Platform id
+    name: String! # Platform name
+    address: Bytes! # Platform address
+    originLeaseFeeRate: BigInt! # Fee (per 10,000) asked by the platform on which the Lease was validated
+    originProposalFeeRate: BigInt! # Fee (per 10,000) asked by the platform on which the proposal was validated
+    leasePostingFee: BigInt! # Flat fee asked by the platform to post a Lease
+    proposalPostingFee: BigInt! # Flat fee asked by the platform to post a service
+    createdAt: BigInt # timestamp of block creation
+    updatedAt: BigInt # timestamp of the last change
+    cid: String # metadata cid of the platform
 }
